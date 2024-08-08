@@ -13,7 +13,7 @@ public class ParallelSimulation extends RecursiveTask<Boolean> {
     private int[][] grid;
 
     private int[][] updateGrid;
-    static final int Cut_Off = 4;
+    static final int Cut_Off = 30;
 
     public int hi;
 
@@ -26,6 +26,8 @@ public class ParallelSimulation extends RecursiveTask<Boolean> {
         columns = h+2; //for the "sink" border
         grid = new int[this.rows][this.columns];
         updateGrid=new int[this.rows][this.columns];
+        lo = 1;
+        hi = grid.length -1 ;
         /* grid  initialization */
         for(int i=0; i<this.rows; i++ ) {
             for( int j=0; j<this.columns; j++ ) {
@@ -33,8 +35,6 @@ public class ParallelSimulation extends RecursiveTask<Boolean> {
                 updateGrid[i][j]=0;
             }
         }
-        lo = 1;
-        hi = grid.length -1 ;
     }
 
     public ParallelSimulation(int[][] newGrid)
@@ -46,10 +46,6 @@ public class ParallelSimulation extends RecursiveTask<Boolean> {
                 this.grid[i][j]=newGrid[i-1][j-1];
             }
         }
-
-        lo = 1;
-        hi = grid[0].length - 1;
-
     }
 
     public ParallelSimulation(ParallelSimulation copyGrid) {
@@ -106,27 +102,27 @@ public class ParallelSimulation extends RecursiveTask<Boolean> {
 
         boolean change = false;
 
-        if( (hi - lo) < Cut_Off){
-            for (int i = lo; i < hi - 1; i++) {
+        if( hi - lo < Cut_Off) {
+            for (int i = 1; i < rows - 1; i++) {
                 for (int j = 1; j < columns - 1; j++) {
                     updateGrid[i][j] = (grid[i][j] % 4) +
                             (grid[i - 1][j] / 4) +
                             grid[i + 1][j] / 4 +
                             grid[i][j - 1] / 4 +
                             grid[i][j + 1] / 4;
-
                     if (grid[i][j] != updateGrid[i][j]) {
                         change = true;
                     }
                 }
             }
+
         }
 
         else{
 
-            ParallelSimulation right = new ParallelSimulation(grid,updateGrid,lo,(hi+lo)/2);
+            ParallelSimulation left = new ParallelSimulation(grid,updateGrid,lo,(hi+lo)/2);
 
-            ParallelSimulation left = new ParallelSimulation(grid,updateGrid,(lo+hi)/2, hi);
+            ParallelSimulation right = new ParallelSimulation(grid,updateGrid,(lo+hi)/2, hi);
 
             left.fork();
 
@@ -136,8 +132,10 @@ public class ParallelSimulation extends RecursiveTask<Boolean> {
 
             if( l || r ){
                 change = true;
+                return change;
             }
         }
+        if (change) { nextTimeStep();}
         return change;
     }
 

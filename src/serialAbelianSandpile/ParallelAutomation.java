@@ -13,7 +13,7 @@ import java.util.concurrent.ForkJoinPool;
  */
 
 class ParallelAutomation{
-    static final boolean DEBUG=true;//for debugging output, off
+    static final boolean DEBUG= false;//for debugging output, off
 
     static long startTime = 0;
     static long endTime = 0;
@@ -84,16 +84,21 @@ class ParallelAutomation{
 
         int counter=0;
         tick(); //start timer
+
         if(DEBUG) {
             System.out.printf("starting config: %d \n",counter);
             simulationGrid.printGrid();
         }
-        while(fjPool.invoke(simulationGrid)) {//run until no change
+
+        boolean ans = fjPool.invoke(simulationGrid);
+
+        while(ans) {//run until no change
             if(DEBUG) simulationGrid.printGrid();
             counter++;
         }
-        if(fjPool.invoke(simulationGrid)){
-        simulationGrid.nextTimeStep();}
+        if(ans){
+            simulationGrid.nextTimeStep();
+        }
 
         tock(); //end timer
 
