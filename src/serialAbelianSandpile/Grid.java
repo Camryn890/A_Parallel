@@ -77,7 +77,7 @@ public class Grid {
 		}
 	}
 	
-	//key method to calculate the next update grod
+	//key method to calculate the next update grid
 	boolean update() {
 		boolean change=false;
 		//do not update border
@@ -88,7 +88,7 @@ public class Grid {
 						grid[i+1][j] / 4 +
 						grid[i][j-1] / 4 + 
 						grid[i][j+1] / 4;
-				if (grid[i][j]!=updateGrid[i][j]) {  
+				if (grid[i][j]!=updateGrid[i][j]) {
 					change=true;
 				}
 		}} //end nested for

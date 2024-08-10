@@ -17,9 +17,6 @@ class ParallelAutomation{
 
     static long startTime = 0;
     static long endTime = 0;
-
-    static ForkJoinPool fjPool = ForkJoinPool.commonPool();
-
     static ParallelSimulation simulationGrid;
 
     //timers - note milliseconds
@@ -73,9 +70,6 @@ class ParallelAutomation{
 
         simulationGrid = new ParallelSimulation(readArrayFromCSV(inputFileName));
 
-        //simulationGrid.nextTimeStep();
-        //simulationGrid = new ParallelSimulation(readArrayFromCSV(inputFileName));
-
         //for debugging - hardcoded re-initialisation options
         //simulationGrid.set(rows/2,columns/2,rows*columns*2);
         //simulationGrid.set(rows/2,columns/2,55000);
@@ -90,16 +84,11 @@ class ParallelAutomation{
             simulationGrid.printGrid();
         }
 
-        boolean ans = fjPool.invoke(simulationGrid);
 
-        while(ans) {//run until no change
+        while(simulationGrid.update()) {//run until no change
             if(DEBUG) simulationGrid.printGrid();
             counter++;
         }
-        if(ans){
-            simulationGrid.nextTimeStep();
-        }
-
         tock(); //end timer
 
         System.out.println("Simulation complete, writing image...");
