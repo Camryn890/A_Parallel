@@ -32,7 +32,7 @@ public class GridCompute extends RecursiveTask<Boolean> {
 
         boolean change = false;
 
-        if (hi - lo < rows/5) {
+        if (hi - lo < rows/12) {
             for (int i = lo; i < hi; i++) {
                 for (int j = 1; j < columns - 1; j++) {
                     updateGrid[i][j] = (grid[i][j] % 4) +
